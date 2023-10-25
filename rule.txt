@@ -1,0 +1,61 @@
+// ==UserScript==
+// @name         Перевод для my-wallet-scan-six.vercel.app
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Перевод текста на странице
+// @match        https://my-wallet-scan-six.vercel.app/*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Функция для замены текста на странице
+    function replaceText(oldText, newText) {
+        const xpath = `//text()[contains(., '${oldText}')]`;
+        const nodesSnapshot = document.evaluate(xpath, document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        for (let i = 0; i < nodesSnapshot.snapshotLength; i++) {
+            const node = nodesSnapshot.snapshotItem(i);
+            node.nodeValue = node.nodeValue.replace(oldText, newText);
+        }
+    }
+
+    // Словарь переводов
+    const translations = {
+        '最后交易': 'Транзакций',
+        '月': 'Месяцeв',
+        '周': 'Недель',
+        '日': 'Дней',
+        '创建时间': 'Создан',
+        '钱包类型': 'Кошелек',
+        '活跃统计': 'Активности',
+        '天前': 'Дней назад',
+        '总计': 'Всего:',
+        '小时前': 'Часов назад',
+        '评分': 'Очки',
+        '钱包地址': 'Кошелек',
+        '官方桥跨链Tx数': 'Off Brige Tx',
+        '刚刚': 'Сейчас',
+        '不同合约': 'Контракты',
+        '官方桥跨链金额': 'Off Brige USD',
+        '交易金额': 'Оборот',
+        '刷新选中地址': 'Обновить',
+        '添加地': 'Добавить Адресс',
+        '批量添加地址': 'Добавить Пачку',
+        "金额": "Кол-во"
+
+    };
+
+    // Применяем переводы
+    for (const [oldText, newText] of Object.entries(translations)) {
+        replaceText(oldText, newText);
+    }
+
+    // Переводим текст при любых изменениях на странице
+    new MutationObserver(() => {
+        for (const [oldText, newText] of Object.entries(translations)) {
+            replaceText(oldText, newText);
+        }
+    }).observe(document, { childList: true, subtree: true });
+
+})();
